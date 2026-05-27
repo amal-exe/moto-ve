@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "740676080587",
+    "project_id": "motov-8752a",
+    "storage_bucket": "motov-8752a.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:740676080587:android:1671541325dc782ed6dc4e",
+        "android_client_info": {
+          "package_name": "com.android.moto_ve"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyD968kK5yjhVrEHJzDgquAhCJqai1gWvVc"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
