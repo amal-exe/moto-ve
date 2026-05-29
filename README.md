@@ -1,16 +1,29 @@
-# moto_ve
+# Moto-VE
 
-A new Flutter project.
+Smart Vehicle Recommendation Platform built using Flutter and Firebase.
+
+## Features
+- Smart vehicle recommendation
+- Advanced filtering
+- EMI estimation
+- Vehicle comparison
+- Favorites management
+- Detailed specification pages
+- Responsive UI design
+
+## Tech Stack
+- Flutter
+- Dart
+- Firebase
+- Cloud Firestore
+- Firebase Authentication
 
 ## Getting Started
 
-This project is a starting point for a Flutter application.
+```bash
+flutter pub get
+flutter run
+```
 
-A few resources to get you started if this is your first Flutter project:
-
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
-
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+## Author
+Amal
