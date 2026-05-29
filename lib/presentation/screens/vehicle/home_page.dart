@@ -2,15 +2,14 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:carousel_slider/carousel_slider.dart';
 import 'package:moto_ve/presentation/screens/recommendation/budget_page.dart';
 import 'package:moto_ve/presentation/screens/vehicle/bike_page.dart';
 import 'package:moto_ve/presentation/screens/vehicle/car_page.dart';
 import 'package:moto_ve/presentation/screens/vehicle/evs_page.dart';
-
 import '../../../bloc/favourite/favourite_bloc.dart';
 import '../../../bloc/favourite/favourite_event.dart';
 import '../../../bloc/favourite/favourite_state.dart';
+import '../../../widget/carousel/home_carousel.dart';
 import '../auth/register_page.dart';
 import '../favourite/favourite_page.dart';
 import '../menu.dart';
@@ -24,70 +23,8 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomeState extends State<HomePage> {
-  Widget buildCarousel() {
-    return StreamBuilder<QuerySnapshot>(
-      stream: FirebaseFirestore.instance.collection('ads').snapshots(),
-      builder: (context, snapshot) {
-        if (snapshot.connectionState == ConnectionState.waiting) {
-          return Center(child: CircularProgressIndicator());
-        }
 
-        if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
-          return Center(
-            child: Text("No Ads Found", style: TextStyle(color: Colors.white)),
-          );
-        }
 
-        var ads = snapshot.data!.docs;
-
-        return CarouselSlider(
-          options: CarouselOptions(
-            height: 200,
-            autoPlay: true,
-            enlargeCenterPage:
-                false, // Set to false to maintain consistent width
-            viewportFraction: 1.0, // Occupies full width of the screen
-          ),
-          items: ads.map((doc) {
-            return Builder(
-              builder: (BuildContext context) {
-                return Container(
-                  width: MediaQuery.of(context).size.width,
-                  margin: EdgeInsets.symmetric(
-                    horizontal: 10,
-                    vertical: 8,
-                  ), // Vertical margin is KEY for the glow to show
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(15),
-                    // The Glow Effect
-                    boxShadow: [
-                      BoxShadow(
-                        color: Colors.white.withOpacity(0.5),
-                        blurRadius: 8,
-                        spreadRadius: 1,
-                        offset: Offset(0, 0),
-                      ),
-                    ],
-                  ),
-                  child: Container(
-                    // Inner container for the border and image
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(15),
-                      border: Border.all(width: 2.5, color: Color(0xFF341F97)),
-                      image: DecorationImage(
-                        image: NetworkImage(doc['image']),
-                        fit: BoxFit.cover,
-                      ),
-                    ),
-                  ),
-                );
-              },
-            );
-          }).toList(),
-        );
-      },
-    );
-  }
 
   Widget premiumCategoryCard({
     required IconData icon,
@@ -292,17 +229,22 @@ class _HomeState extends State<HomePage> {
     return Stack(
       children: [
         Scaffold(
-          backgroundColor: const Color(0xFF070B14),
+          backgroundColor:
+          Theme.of(context)
+              .scaffoldBackgroundColor,
           appBar: AppBar(
             elevation: 0,
             scrolledUnderElevation: 0,
-            backgroundColor: const Color(0xFF070B14),
+            backgroundColor:
+            Theme.of(context)
+                .appBarTheme
+                .backgroundColor,
             surfaceTintColor: Colors.transparent,
 
             leadingWidth: 68,
 
             leading: Padding(
-              padding: const EdgeInsets.only(left: 12),
+              padding: const EdgeInsets.only(left: 12,right: 5),
 
               child: GestureDetector(
                 onTap: () {
@@ -311,32 +253,43 @@ class _HomeState extends State<HomePage> {
                   });
                 },
 
-                child: Container(
-                  height: 44,
-                  width: 44,
+                child: Padding(
+                  padding: const EdgeInsets.all(4),
+                  child: Container(
+                    height: 44,
+                    width: 44,
 
-                  decoration: BoxDecoration(
-                    color: Colors.white.withOpacity(0.04),
+                    decoration: BoxDecoration(
+                      color:
+                      Theme.of(context)
+                          .textTheme
+                          .bodyLarge
+                          ?.color?.withOpacity(0.04),
 
-                    borderRadius: BorderRadius.circular(16),
+                      borderRadius: BorderRadius.circular(16),
 
-                    border: Border.all(
-                      color: Colors.cyanAccent.withOpacity(0.12),
+                      border: Border.all(
+                        color: Colors.cyanAccent.withOpacity(0.12),
+                      ),
+
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.cyanAccent.withOpacity(0.08),
+                          blurRadius: 18,
+                          spreadRadius: 1,
+                        ),
+                      ],
                     ),
 
-                    boxShadow: [
-                      BoxShadow(
-                        color: Colors.cyanAccent.withOpacity(0.08),
-                        blurRadius: 18,
-                        spreadRadius: 1,
-                      ),
-                    ],
-                  ),
-
-                  child: const Icon(
-                    Icons.menu_rounded,
-                    color: Colors.white,
-                    size: 22,
+                    child:  Icon(
+                      Icons.menu_rounded,
+                      color:
+                      Theme.of(context)
+                          .textTheme
+                          .bodyLarge
+                          ?.color,
+                      size: 22,
+                    ),
                   ),
                 ),
               ),
@@ -359,19 +312,23 @@ class _HomeState extends State<HomePage> {
                         child: RichText(
                           overflow: TextOverflow.ellipsis,
 
-                          text: const TextSpan(
+                          text:  TextSpan(
                             children: [
                               TextSpan(
                                 text: "Drive",
                                 style: TextStyle(
                                   fontSize: 24,
                                   fontWeight: FontWeight.w700,
-                                  color: Colors.white,
+                                  color:
+                                  Theme.of(context)
+                                      .textTheme
+                                      .bodyLarge
+                                      ?.color,
                                   letterSpacing: 0.3,
                                 ),
                               ),
 
-                              TextSpan(
+                              const TextSpan(
                                 text: "Wise",
                                 style: TextStyle(
                                   fontSize: 24,
@@ -469,8 +426,12 @@ class _HomeState extends State<HomePage> {
                             maxLines: 1,
                             overflow: TextOverflow.ellipsis,
 
-                            style: const TextStyle(
-                              color: Colors.white,
+                            style:  TextStyle(
+                              color:
+                              Theme.of(context)
+                                  .textTheme
+                                  .bodyLarge
+                                  ?.color,
                               fontSize: 12,
                               fontWeight: FontWeight.w600,
                             ),
@@ -501,7 +462,11 @@ class _HomeState extends State<HomePage> {
                     width: 44,
 
                     decoration: BoxDecoration(
-                      color: Colors.white.withOpacity(0.04),
+                      color:
+                      Theme.of(context)
+                          .textTheme
+                          .bodyLarge
+                          ?.color?.withOpacity(0.04),
 
                       borderRadius: BorderRadius.circular(16),
 
@@ -533,31 +498,26 @@ class _HomeState extends State<HomePage> {
             child: ListView(
               children: [
                 Container(
-                  width: double.infinity,
-                  padding: EdgeInsets.symmetric(
-                    horizontal: MediaQuery.of(context).size.width < 400
-                        ? 12
-                        : 16,
-                    vertical: 2,
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 16,
                   ),
 
                   decoration: BoxDecoration(
-                    color: Colors.white.withOpacity(0.04),
+                    color: const Color(0xFF102532),
 
-                    borderRadius: BorderRadius.circular(
-                      MediaQuery.of(context).size.width < 400 ? 18 : 22,
-                    ),
+                    borderRadius: BorderRadius.circular(14),
 
                     border: Border.all(
-                      color: Colors.cyanAccent.withOpacity(0.12),
-                      width: 1,
+                      color: const Color(0xFF26C6DA)
+                          .withOpacity(0.12),
                     ),
 
                     boxShadow: [
                       BoxShadow(
-                        color: Colors.cyanAccent.withOpacity(0.06),
-                        blurRadius: 24,
-                        spreadRadius: 1,
+                        color: const Color(0xFF26C6DA)
+                            .withOpacity(0.08),
+
+                        blurRadius: 18,
                       ),
                     ],
                   ),
@@ -565,67 +525,55 @@ class _HomeState extends State<HomePage> {
                   child: TextField(
                     controller: searchController,
 
-                    onChanged: (value) {
-                      setState(() {
-                        searchText = value.toLowerCase();
-                      });
-                    },
+                    textInputAction: TextInputAction.search,
 
                     onSubmitted: (value) {
+
+                      final query =
+                      value.trim().toLowerCase();
+
+                      if (query.isEmpty) return;
+
                       Navigator.push(
                         context,
+
                         MaterialPageRoute(
-                          builder: (context) => ExplorePage(search: value),
+                          builder: (_) => ExplorePage(
+                            search: query,
+                          ),
                         ),
                       );
                     },
 
-                    style: TextStyle(
-                      color: Colors.white,
-                      fontSize: MediaQuery.of(context).size.width < 400
-                          ? 13
-                          : 15,
+                    style:  TextStyle(
+                      color:
+                      Theme.of(context)
+                          .textTheme
+                          .bodyLarge
+                          ?.color,
+                      fontSize: 15,
                       fontWeight: FontWeight.w500,
                     ),
 
-                    cursorColor: const Color(0xFF00E5FF),
+                    cursorColor:
+                    const Color(0xFF26C6DA),
 
-                    decoration: InputDecoration(
-                      border: InputBorder.none,
+                    decoration: const InputDecoration(
 
-                      isDense: true,
-
-                      contentPadding: const EdgeInsets.symmetric(vertical: 14),
-
-                      prefixIcon: Padding(
-                        padding: const EdgeInsets.only(left: 4, right: 8),
-
-                        child: Icon(
-                          Icons.search_rounded,
-                          color: Colors.cyanAccent.withOpacity(0.85),
-
-                          size: MediaQuery.of(context).size.width < 400
-                              ? 20
-                              : 24,
-                        ),
+                      icon: Icon(
+                        Icons.search,
+                        color: Color(0xFF6FEFFF),
                       ),
 
-                      prefixIconConstraints: const BoxConstraints(
-                        minWidth: 40,
-                        maxWidth: 50,
-                      ),
-
-                      hintText: "Search cars, bikes, EVs...",
+                      hintText:
+                      "Search cars, bikes, EVs...",
 
                       hintStyle: TextStyle(
-                        color: Colors.white.withOpacity(0.45),
-
-                        fontSize: MediaQuery.of(context).size.width < 400
-                            ? 12
-                            : 14,
-
-                        fontWeight: FontWeight.w400,
+                        color: Color(0xFF9EDAE2),
+                        fontSize: 14,
                       ),
+
+                      border: InputBorder.none,
                     ),
                   ),
                 ),
@@ -725,7 +673,11 @@ class _HomeState extends State<HomePage> {
                                       "Find Your\nNext Machine",
 
                                       style: TextStyle(
-                                        color: Colors.white,
+                                        color:
+                                        Theme.of(context)
+                                            .textTheme
+                                            .bodyLarge
+                                            ?.color,
 
                                         fontSize:
                                             MediaQuery.of(context).size.width <
@@ -746,7 +698,11 @@ class _HomeState extends State<HomePage> {
                                       "Explore luxury cars, bikes & EVs with futuristic experiences.",
 
                                       style: TextStyle(
-                                        color: Colors.white.withOpacity(0.65),
+                                        color:
+                                        Theme.of(context)
+                                            .textTheme
+                                            .bodyLarge
+                                            ?.color?.withOpacity(0.65),
 
                                         fontSize:
                                             MediaQuery.of(context).size.width <
@@ -907,7 +863,7 @@ class _HomeState extends State<HomePage> {
 
                                             const SizedBox(height: 16),
 
-                                            const Text(
+                                             const Text(
                                               "Find Your\nNext Machine",
 
                                               style: TextStyle(
@@ -1034,11 +990,11 @@ class _HomeState extends State<HomePage> {
                   ),
                 ),
 
-                SizedBox(height: 20),
+                const SizedBox(height: 20),
 
-                buildCarousel(),
+                const HomeCarousel(),
 
-                SizedBox(height: 20),
+                const SizedBox(height: 20),
 
                 Row(
                   children: [
@@ -1097,27 +1053,35 @@ class _HomeState extends State<HomePage> {
                   ],
                 ),
 
-                SizedBox(height: 12),
+                const SizedBox(height: 12),
 
-                Text(
+                 Text(
                   'Category',
                   style: TextStyle(
                     fontWeight: FontWeight.bold,
-                    color: Colors.white,
+                    color:
+                    Theme.of(context)
+                        .textTheme
+                        .bodyLarge
+                        ?.color,
                   ),
                 ),
 
-                SizedBox(height: 20),
+                const SizedBox(height: 20),
 
-                Text(
+                 Text(
                   'Trending Bikes',
                   style: TextStyle(
                     fontWeight: FontWeight.bold,
-                    color: Colors.white,
+                    color:
+                    Theme.of(context)
+                        .textTheme
+                        .bodyLarge
+                        ?.color,
                   ),
                 ),
 
-                SizedBox(height: 20),
+                const SizedBox(height: 20),
 
                 SizedBox(
                   height: 190,
@@ -1133,10 +1097,14 @@ class _HomeState extends State<HomePage> {
                       }
 
                       if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
-                        return const Center(
+                        return Center(
                           child: Text(
                             "No Bikes",
-                            style: TextStyle(color: Colors.white),
+                            style: TextStyle(color:
+                            Theme.of(context)
+                                .textTheme
+                                .bodyLarge
+                                ?.color),
                           ),
                         );
                       }
@@ -1220,7 +1188,7 @@ class _HomeState extends State<HomePage> {
                                                     maxLines: 1,
                                                     overflow:
                                                         TextOverflow.ellipsis,
-                                                    style: TextStyle(
+                                                    style: const TextStyle(
                                                       color: Colors.orange,
                                                       fontWeight:
                                                           FontWeight.bold,
@@ -1237,7 +1205,11 @@ class _HomeState extends State<HomePage> {
                                                     overflow:
                                                         TextOverflow.ellipsis,
                                                     style: TextStyle(
-                                                      color: Colors.white,
+                                                      color:
+                                                      Theme.of(context)
+                                                          .textTheme
+                                                          .bodyLarge
+                                                          ?.color,
                                                       fontWeight:
                                                           FontWeight.bold,
                                                       fontSize: 16,
@@ -1252,13 +1224,13 @@ class _HomeState extends State<HomePage> {
                                                     maxLines: 1,
                                                     overflow:
                                                         TextOverflow.ellipsis,
-                                                    style: TextStyle(
+                                                    style: const TextStyle(
                                                       color: Colors.white70,
                                                       fontSize: 12,
                                                     ),
                                                   ),
 
-                                                  SizedBox(height: 10),
+                                                  const SizedBox(height: 10),
 
                                                   /// FAVORITE BUTTON
                                                   BlocBuilder<
@@ -1366,16 +1338,24 @@ class _HomeState extends State<HomePage> {
                                       child: Row(
                                         mainAxisSize: MainAxisSize.min,
                                         children: [
-                                          Icon(
+                                           Icon(
                                             Icons.star,
                                             size: 10,
-                                            color: Colors.white,
+                                            color:
+                                            Theme.of(context)
+                                                .textTheme
+                                                .bodyLarge
+                                                ?.color,
                                           ),
-                                          SizedBox(width: 2),
+                                          const SizedBox(width: 2),
                                           Text(
                                             rating.toStringAsFixed(1),
                                             style: TextStyle(
-                                              color: Colors.white,
+                                              color:
+                                              Theme.of(context)
+                                                  .textTheme
+                                                  .bodyLarge
+                                                  ?.color,
                                               fontSize: 10,
                                               fontWeight: FontWeight.bold,
                                             ),
@@ -1400,11 +1380,15 @@ class _HomeState extends State<HomePage> {
                   'Explore Cars',
                   style: TextStyle(
                     fontWeight: FontWeight.bold,
-                    color: Colors.white,
+                    color:
+                    Theme.of(context)
+                        .textTheme
+                        .bodyLarge
+                        ?.color,
                   ),
                 ),
 
-                SizedBox(height: 20),
+                const SizedBox(height: 20),
 
                 SizedBox(
                   height: 190,
@@ -1420,10 +1404,14 @@ class _HomeState extends State<HomePage> {
                       }
 
                       if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
-                        return const Center(
+                        return  Center(
                           child: Text(
                             "No Cars",
-                            style: TextStyle(color: Colors.white),
+                            style: TextStyle(color:
+                            Theme.of(context)
+                                .textTheme
+                                .bodyLarge
+                                ?.color),
                           ),
                         );
                       }
@@ -1524,7 +1512,11 @@ class _HomeState extends State<HomePage> {
                                                     overflow:
                                                         TextOverflow.ellipsis,
                                                     style: TextStyle(
-                                                      color: Colors.white,
+                                                      color:
+                                                      Theme.of(context)
+                                                          .textTheme
+                                                          .bodyLarge
+                                                          ?.color,
                                                       fontWeight:
                                                           FontWeight.bold,
                                                       fontSize: 16,
@@ -1540,7 +1532,11 @@ class _HomeState extends State<HomePage> {
                                                     overflow:
                                                         TextOverflow.ellipsis,
                                                     style: TextStyle(
-                                                      color: Colors.white70,
+                                                      color:
+                                                      Theme.of(context)
+                                                          .textTheme
+                                                          .bodyLarge
+                                                          ?.color,
                                                       fontSize: 12,
                                                     ),
                                                   ),
@@ -1657,13 +1653,21 @@ class _HomeState extends State<HomePage> {
                                           Icon(
                                             Icons.star,
                                             size: 10,
-                                            color: Colors.white,
+                                            color:
+                                            Theme.of(context)
+                                                .textTheme
+                                                .bodyLarge
+                                                ?.color,
                                           ),
                                           SizedBox(width: 2),
                                           Text(
                                             rating.toStringAsFixed(1),
                                             style: TextStyle(
-                                              color: Colors.white,
+                                              color:
+                                              Theme.of(context)
+                                                  .textTheme
+                                                  .bodyLarge
+                                                  ?.color,
                                               fontSize: 10,
                                               fontWeight: FontWeight.bold,
                                             ),
@@ -1688,7 +1692,11 @@ class _HomeState extends State<HomePage> {
                   'Explore EVs',
                   style: TextStyle(
                     fontWeight: FontWeight.bold,
-                    color: Colors.white,
+                    color:
+                    Theme.of(context)
+                        .textTheme
+                        .bodyLarge
+                        ?.color,
                   ),
                 ),
 
@@ -1707,10 +1715,14 @@ class _HomeState extends State<HomePage> {
                       }
 
                       if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
-                        return const Center(
+                        return  Center(
                           child: Text(
                             "No EV's",
-                            style: TextStyle(color: Colors.white),
+                            style: TextStyle(color:
+                            Theme.of(context)
+                                .textTheme
+                                .bodyLarge
+                                ?.color),
                           ),
                         );
                       }
@@ -1811,7 +1823,11 @@ class _HomeState extends State<HomePage> {
                                                     overflow:
                                                         TextOverflow.ellipsis,
                                                     style: TextStyle(
-                                                      color: Colors.white,
+                                                      color:
+                                                      Theme.of(context)
+                                                          .textTheme
+                                                          .bodyLarge
+                                                          ?.color,
                                                       fontWeight:
                                                           FontWeight.bold,
                                                       fontSize: 16,
@@ -1827,7 +1843,11 @@ class _HomeState extends State<HomePage> {
                                                     overflow:
                                                         TextOverflow.ellipsis,
                                                     style: TextStyle(
-                                                      color: Colors.white70,
+                                                      color:
+                                                      Theme.of(context)
+                                                          .textTheme
+                                                          .bodyLarge
+                                                          ?.color,
                                                       fontSize: 12,
                                                     ),
                                                   ),
@@ -1944,13 +1964,21 @@ class _HomeState extends State<HomePage> {
                                           Icon(
                                             Icons.star,
                                             size: 10,
-                                            color: Colors.white,
+                                            color:
+                                            Theme.of(context)
+                                                .textTheme
+                                                .bodyLarge
+                                                ?.color,
                                           ),
                                           SizedBox(width: 2),
                                           Text(
                                             rating.toStringAsFixed(1),
                                             style: TextStyle(
-                                              color: Colors.white,
+                                              color:
+                                              Theme.of(context)
+                                                  .textTheme
+                                                  .bodyLarge
+                                                  ?.color,
                                               fontSize: 10,
                                               fontWeight: FontWeight.bold,
                                             ),

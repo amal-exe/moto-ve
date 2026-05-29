@@ -1,7 +1,8 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:moto_ve/presentation/screens/profile.dart';
-
+import '../../widget/theme/theme_mode.dart';
 import 'vehicle/home_page.dart';
 
 class MenuPage extends StatefulWidget {
@@ -15,31 +16,37 @@ class MenuPage extends StatefulWidget {
 }
 
 class _MenuPageState extends State<MenuPage> {
-
   Widget menuTile(
-      IconData icon,
-      String title, {
-        VoidCallback? onTap,
-      }) {
+    BuildContext context,
+    IconData icon,
+    String title, {
+    VoidCallback? onTap,
+  }) {
+    final width = MediaQuery.of(context).size.width;
+
     return Padding(
-      padding: const EdgeInsets.symmetric(
-        horizontal: 18,
-        vertical: 6,
+      padding: EdgeInsets.symmetric(
+        horizontal: width * 0.045,
+        vertical: width * 0.012,
       ),
+
       child: ListTile(
-        leading: Icon(
-          icon,
-          color: Colors.white,
-          size: 28,
-        ),
+        contentPadding: EdgeInsets.zero,
+
+        leading: Icon(icon, color: Colors.white, size: width < 400 ? 24 : 28),
+
         title: Text(
           title,
-          style: const TextStyle(
+
+          style: TextStyle(
             color: Colors.white,
-            fontSize: 18,
+
+            fontSize: width < 400 ? 15 : 18,
+
             fontWeight: FontWeight.w500,
           ),
         ),
+
         onTap: onTap,
       ),
     );
@@ -53,38 +60,48 @@ class _MenuPageState extends State<MenuPage> {
 
   @override
   Widget build(BuildContext context) {
-    double width = MediaQuery.of(context).size.width;
+    final size = MediaQuery.of(context).size;
+
+    final width = size.width;
+    final height = size.height;
 
     return Stack(
       children: [
-        // DARK OVERLAY
+        /// DARK OVERLAY
         if (widget.isOpen)
           GestureDetector(
             onTap: widget.onClose,
+
             child: Container(color: Colors.black.withOpacity(0.45)),
           ),
 
-        // SLIDING MENU
-        // SLIDING MENU
+        /// MENU
         AnimatedPositioned(
           duration: const Duration(milliseconds: 300),
+
           curve: Curves.easeInOut,
+
           left: widget.isOpen ? 0 : -width * 0.80,
+
           top: 0,
-          // REMOVED 'bottom' so the container can shrink to fit content
+          bottom: 0,
 
           child: Material(
             color: Colors.transparent,
+
             borderRadius: const BorderRadius.only(
               topRight: Radius.circular(35),
               bottomRight: Radius.circular(35),
             ),
+
             clipBehavior: Clip.antiAlias,
 
             child: Container(
               width: width * 0.78,
+
               decoration: BoxDecoration(
-                color: Colors.black.withOpacity(0.9),
+                color: Colors.black.withOpacity(0.92),
+
                 borderRadius: const BorderRadius.only(
                   topRight: Radius.circular(35),
                   bottomRight: Radius.circular(35),
@@ -92,66 +109,156 @@ class _MenuPageState extends State<MenuPage> {
               ),
 
               child: SafeArea(
-                bottom: false,
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    const SizedBox(height: 40),
+                child: Padding(
+                  padding: EdgeInsets.symmetric(vertical: height * 0.02),
 
-                    /// PROFILE
-                    const CircleAvatar(
-                      radius: 42,
-                      backgroundColor: Colors.white,
-                      child: Icon(
-                        Icons.person,
-                        size: 45,
-                        color: Colors.black,
-                      ),
-                    ),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
 
-                    const SizedBox(height: 15),
+                    children: [
+                      SizedBox(height: height * 0.03),
 
-                    Text(
-                      capitalizeFirstLetter(
-                        FirebaseAuth.instance.currentUser?.displayName ?? "User",
-                      ),
-                      style: const TextStyle(
-                        color: Colors.white,
-                        fontSize: 24,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
+                      /// PROFILE IMAGE
+                      Center(
+                        child: CircleAvatar(
+                          radius: width < 400 ? 38 : 46,
 
-                    const SizedBox(height: 30),
+                          backgroundColor: Colors.white,
 
-                    GestureDetector(
-                        onTap: () {
-                          Navigator.push(context, MaterialPageRoute(builder: (context)=>ProfilePage()));
-                        },
-                        child: menuTile(Icons.person_outline, "Profile")),
-                    menuTile(Icons.feedback_outlined, "Feedback"),
-                    menuTile(Icons.description_outlined, "Terms & Conditions"),
-                    menuTile(Icons.privacy_tip_outlined, "Privacy Policy"),
-                    menuTile(Icons.phone_outlined, "Contact Us"),
-                    menuTile(
-                      Icons.logout,
-                      "Logout",
-                      onTap: () async {
+                          child: Icon(
+                            Icons.person,
 
-                        await FirebaseAuth.instance.signOut();
+                            size: width < 400 ? 38 : 48,
 
-                        Navigator.pushAndRemoveUntil(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) =>  HomePage(),
+                            color: Colors.black,
                           ),
-                              (route) => false,
-                        );
-                      },
-                    ),
+                        ),
+                      ),
 
-                    const SizedBox(height: 30),
-                  ],
+                      SizedBox(height: height * 0.018),
+
+                      /// USERNAME
+                      Center(
+                        child: Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 16),
+
+                          child: Text(
+                            capitalizeFirstLetter(
+                              FirebaseAuth.instance.currentUser?.displayName ??
+                                  "User",
+                            ),
+
+                            maxLines: 1,
+
+                            overflow: TextOverflow.ellipsis,
+
+                            style: TextStyle(
+                              color: Colors.white,
+
+                              fontSize: width < 400 ? 20 : 24,
+
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                        ),
+                      ),
+
+                      SizedBox(height: height * 0.04),
+
+                      /// MENU ITEMS
+                      Expanded(
+                        child: SingleChildScrollView(
+                          child: Column(
+                            children: [
+                              GestureDetector(
+                                onTap: () {
+                                  Navigator.push(
+                                    context,
+
+                                    MaterialPageRoute(
+                                      builder: (context) => const ProfilePage(),
+                                    ),
+                                  );
+                                },
+
+                                child: menuTile(
+                                  context,
+                                  Icons.person_outline,
+                                  "Profile",
+                                ),
+                              ),
+
+                              menuTile(
+                                context,
+                                Icons.feedback_outlined,
+                                "Feedback",
+                              ),
+
+                              menuTile(
+                                context,
+                                Icons.description_outlined,
+                                "Terms & Conditions",
+                              ),
+
+                              menuTile(
+                                context,
+                                Icons.privacy_tip_outlined,
+                                "Privacy Policy",
+                              ),
+
+                              menuTile(
+                                context,
+                                Icons.phone_outlined,
+                                "Contact Us",
+                              ),
+
+                              menuTile(
+
+                                context,
+
+                                Theme.of(context).brightness ==
+                                    Brightness.dark
+                                    ? Icons.light_mode
+                                    : Icons.dark_mode,
+
+                                Theme.of(context).brightness ==
+                                    Brightness.dark
+                                    ? "Light Mode"
+                                    : "Dark Mode",
+
+                                onTap: () {
+
+                                  context
+                                      .read<ThemeCubit>()
+                                      .toggleTheme();
+                                },
+                              ),
+
+                              menuTile(
+                                context,
+                                Icons.logout,
+                                "Logout",
+
+                                onTap: () async {
+                                  await FirebaseAuth.instance.signOut();
+
+                                  Navigator.pushAndRemoveUntil(
+                                    context,
+
+                                    MaterialPageRoute(
+                                      builder: (context) => HomePage(),
+                                    ),
+
+                                    (route) => false,
+                                  );
+                                },
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
                 ),
               ),
             ),

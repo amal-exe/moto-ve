@@ -19,18 +19,14 @@ class ExplorePage extends StatefulWidget {
 }
 
 class _ExplorePageState extends State<ExplorePage> {
-
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
       create: (context) {
-
-        final bloc = ExploreBloc()
-          ..add(LoadVehicles());
+        final bloc = ExploreBloc()..add(LoadVehicles());
 
         if (widget.search != null &&
             widget.search!.isNotEmpty) {
-
           bloc.add(
             SearchQueryChanged(widget.search!),
           );
@@ -38,13 +34,12 @@ class _ExplorePageState extends State<ExplorePage> {
 
         return bloc;
       },
-
       child: Scaffold(
         backgroundColor: const Color(0xFF071018),
 
         body: SafeArea(
           child: Padding(
-            padding: const EdgeInsets.all(20),
+            padding: const EdgeInsets.all(16),
 
             child: Column(
               crossAxisAlignment:
@@ -53,7 +48,8 @@ class _ExplorePageState extends State<ExplorePage> {
               children: [
 
                 IconButton(
-                  onPressed: () => Navigator.pop(context),
+                  onPressed: () =>
+                      Navigator.pop(context),
 
                   icon: const Icon(
                     Icons.arrow_back_ios,
@@ -190,7 +186,15 @@ class _ExploreGridState
 
   @override
   Widget build(BuildContext context) {
-    return BlocBuilder<ExploreBloc, ExploreState>(
+
+    final width =
+        MediaQuery.of(context).size.width;
+
+    final height =
+        MediaQuery.of(context).size.height;
+
+    return BlocBuilder<ExploreBloc,
+        ExploreState>(
       builder: (context, state) {
 
         if (state.isLoading) {
@@ -218,11 +222,15 @@ class _ExploreGridState
           state.filteredVehicles.length,
 
           gridDelegate:
-          const SliverGridDelegateWithFixedCrossAxisCount(
-            crossAxisCount: 2,
+          SliverGridDelegateWithFixedCrossAxisCount(
+            crossAxisCount:
+            width < 600 ? 2 : 3,
+
             crossAxisSpacing: 12,
-            mainAxisSpacing: 22,
-            mainAxisExtent: 240,
+            mainAxisSpacing: 18,
+
+            childAspectRatio:
+            width < 400 ? 0.62 : 0.72,
           ),
 
           itemBuilder: (context, index) {
@@ -251,7 +259,7 @@ class _ExploreGridState
               child: Container(
                 decoration: BoxDecoration(
                   borderRadius:
-                  BorderRadius.circular(16),
+                  BorderRadius.circular(18),
 
                   gradient:
                   const LinearGradient(
@@ -292,80 +300,124 @@ class _ExploreGridState
 
                     Column(
                       crossAxisAlignment:
-                      CrossAxisAlignment.start,
+                      CrossAxisAlignment
+                          .start,
 
                       children: [
 
-                        const SizedBox(height: 15),
+                        SizedBox(
+                          height: height * 0.015,
+                        ),
 
-                        Center(
-                          child: Image.network(
-                            data['image'],
+                        Expanded(
+                          flex: 5,
 
-                            height: 110,
-                            width: 140,
+                          child: Padding(
+                            padding:
+                            const EdgeInsets
+                                .symmetric(
+                              horizontal: 10,
+                            ),
 
-                            fit: BoxFit.contain,
+                            child: Image.network(
+                              data['image'],
+
+                              fit: BoxFit.contain,
+
+                              width:
+                              double.infinity,
+                            ),
                           ),
                         ),
 
-                        const Spacer(),
+                        Expanded(
+                          flex: 4,
 
-                        Padding(
-                          padding:
-                          const EdgeInsets.all(12),
+                          child: Padding(
+                            padding:
+                            const EdgeInsets
+                                .all(12),
 
-                          child: Column(
-                            crossAxisAlignment:
-                            CrossAxisAlignment
-                                .start,
+                            child: Column(
+                              crossAxisAlignment:
+                              CrossAxisAlignment
+                                  .start,
 
-                            children: [
+                              mainAxisAlignment:
+                              MainAxisAlignment
+                                  .center,
 
-                              Text(
-                                data['brand'] ?? '',
+                              children: [
 
-                                style:
-                                const TextStyle(
-                                  color: Color(
-                                      0xFF6FEFFF),
+                                Text(
+                                  data['brand'] ??
+                                      '',
 
-                                  fontWeight:
-                                  FontWeight
-                                      .bold,
+                                  maxLines: 1,
+
+                                  overflow:
+                                  TextOverflow
+                                      .ellipsis,
+
+                                  style:
+                                  const TextStyle(
+                                    color: Color(
+                                        0xFF6FEFFF),
+
+                                    fontWeight:
+                                    FontWeight
+                                        .bold,
+                                  ),
                                 ),
-                              ),
 
-                              const SizedBox(height: 5),
+                                const SizedBox(
+                                    height: 4),
 
-                              Text(
-                                data['name'] ?? '',
+                                Text(
+                                  data['name'] ??
+                                      '',
 
-                                style:
-                                const TextStyle(
-                                  color:
-                                  Colors.white,
+                                  maxLines: 1,
 
-                                  fontWeight:
-                                  FontWeight
-                                      .bold,
+                                  overflow:
+                                  TextOverflow
+                                      .ellipsis,
 
-                                  fontSize: 16,
+                                  style:
+                                  TextStyle(
+                                    color:
+                                    Colors.white,
+
+                                    fontWeight:
+                                    FontWeight
+                                        .bold,
+
+                                    fontSize:
+                                    width *
+                                        0.038,
+                                  ),
                                 ),
-                              ),
 
-                              const SizedBox(height: 5),
+                                const SizedBox(
+                                    height: 4),
 
-                              Text(
-                                "₹ ${data['price']} Lakh",
+                                Text(
+                                  "₹ ${data['price']} Lakh",
 
-                                style:
-                                const TextStyle(
-                                  color: Color(
-                                      0xFFE4FCFF),
+                                  maxLines: 1,
+
+                                  overflow:
+                                  TextOverflow
+                                      .ellipsis,
+
+                                  style:
+                                  const TextStyle(
+                                    color: Color(
+                                        0xFFE4FCFF),
+                                  ),
                                 ),
-                              ),
-                            ],
+                              ],
+                            ),
                           ),
                         ),
                       ],
@@ -390,21 +442,13 @@ class _ExploreGridState
   }
 }
 
-class _RatingBadge extends StatefulWidget {
+class _RatingBadge extends StatelessWidget {
   final double rating;
 
   const _RatingBadge({
     super.key,
     required this.rating,
   });
-
-  @override
-  State<_RatingBadge> createState() =>
-      _RatingBadgeState();
-}
-
-class _RatingBadgeState
-    extends State<_RatingBadge> {
 
   @override
   Widget build(BuildContext context) {
@@ -442,7 +486,7 @@ class _RatingBadgeState
           const SizedBox(width: 3),
 
           Text(
-            widget.rating.toStringAsFixed(1),
+            rating.toStringAsFixed(1),
 
             style: const TextStyle(
               color: Colors.white,

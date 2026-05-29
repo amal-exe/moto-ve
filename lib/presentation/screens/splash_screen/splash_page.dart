@@ -1,6 +1,6 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
-import 'package:moto_ve/presentation/screens/vehicle/home_page.dart';
+import 'package:moto_ve/navigation/bottom_navigation.dart';
 
 class SplashPage extends StatefulWidget {
   const SplashPage({super.key});
@@ -43,7 +43,7 @@ class _SplashPageState extends State<SplashPage>
     Timer(const Duration(seconds: 4), () {
       Navigator.pushReplacement(
         context,
-        MaterialPageRoute(builder: (context) => const HomePage()),
+        MaterialPageRoute(builder: (context) =>  NavigPage()),
       );
     });
   }
@@ -100,7 +100,7 @@ class _SplashPageState extends State<SplashPage>
                     ),
                     child: Image.asset(
                       'assets/iconcar.png',
-                      scale: 3,
+                      scale: 4.7,
                     ),
                   ),
 
@@ -131,20 +131,20 @@ class _SplashPageState extends State<SplashPage>
 
                   // Tagline
                   const Text(
-                    "Drive your moto and...",
+                    "lets find what ur soul says...",
                     style: TextStyle(
-                      color: Colors.white,
+                      color: Colors.lightBlueAccent,
                       fontSize: 18,
                       fontWeight: FontWeight.w400,
                     ),
                   ),
 
-                  const SizedBox(height: 6),
+                  const SizedBox(height: 20),
 
                   const Text(
                     "Choose Wisely",
                     style: TextStyle(
-                      color: Colors.blueAccent,
+                      color: Colors.white,
                       fontSize: 20,
                       fontWeight: FontWeight.bold,
                       letterSpacing: 1,
